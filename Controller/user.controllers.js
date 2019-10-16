@@ -1,6 +1,6 @@
 const User = require('../models/user.model');
 
-exports.create = (req,res) =>{
+exports.register = (req,res) =>{
     if(!req.body.username || !req.body.password){
         return res.status(400).send({
             message:"username and password can not be empty"
@@ -24,22 +24,22 @@ exports.create = (req,res) =>{
     })
 }
 
-exports.findByUsername = (req,res) =>{
-    if(!req.body.username){
-        return res.status(400).send({message:"username can not be empty"})
+exports.login = (req,res) =>{
+    if(!req.body.username || !req.body.password){
+        return res.status(400).send({message:"username & password can not be empty"})
     }
-    User.findOne({username: req.body.username}).then(user =>{
+    User.findOne({username: req.body.username, password: req.body.password}).then(user =>{
         if(!user){
-            return res.status(404).send({
-                message: "username: " + req.params.username+" not found!"
+            return res.status(400).send({
+                message: "Incorrect email or password."
             });     
         }
         res.send(user);
     })
     .catch(err=>{
         if(err.kind === 'username') {
-            return res.status(404).send({
-                message: "username: " + req.params.noteId+" not found!"
+            return res.status(400).send({
+                message: "Incorrect email or password."
             });                
         }
         return res.status(500).send({
